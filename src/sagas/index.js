@@ -1,16 +1,20 @@
-import { put, all, select, debounce } from 'redux-saga/effects';
-import { getCharacters, charactersLoadedSuccess } from '../actions';
+import {put, all, select, debounce, call} from 'redux-saga/effects';
+import {GET_CHARACTERS, charactersLoadedSuccess, charactersLoadedFiled} from '../actions';
+import { getCharactersApi } from '../api';
 
 function* fetchCharacters() {
-    const state = yield select();
-    const json = yield fetch(`https://rickandmortyapi.com/api/character/?page=${ state.lastLoadedPageNumber }`)
-        .then(response => response.json());
+    try {
+        const { lastLoadedPageNumber } = yield select();
+        const { results } = yield call(getCharactersApi, lastLoadedPageNumber);
 
-    yield put({ type: "CHARACTERS_LOADED_SUCCESS", payload: json.results });
+        yield put(charactersLoadedSuccess(results));
+    } catch (error) {
+        yield put(charactersLoadedFiled(error));
+    }
 }
 
 function* actionWatcher() {
-    yield debounce(1000, 'GET_CHARACTERS', fetchCharacters)
+    yield debounce(1000, GET_CHARACTERS, fetchCharacters);
 }
 
 export default function* rootSaga() {
