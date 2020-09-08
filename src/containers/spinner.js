@@ -1,18 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import img from '../assets/loading_spinner.gif';
+
+const divs = [...(new Array(8))].map(() => (<div></div>));
 
 const getSpinnerTemplate = () => (
     <div className="spinner">
         <div className="lds-roller">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            {divs}
         </div>
     </div>
 );
